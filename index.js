@@ -55,3 +55,5 @@ function updateClockface({ days ='00', hours = '00', mins ='00', secs='00' }) {
   refs.minutes.textContent = `${mins}`;
   refs.seconds.textContent = `${secs}`;
 }
+
+countDownTimer.startTimer();
