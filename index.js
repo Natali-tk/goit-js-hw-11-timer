@@ -13,19 +13,25 @@ class CountdownTimer {
   constructor({ selector, targetDate, onTick}) {
     this.selector = selector;
     this.targetDate = targetDate;
-    this.timerId = null;
+    this.intervalId = null;
     this.onTick = onTick;
 
   }
 
   startTimer = () => {
-    this.timerId = setInterval(() => {
+    this.intervalId = setInterval(() => {
       const currentTime = Date.now();
       const startTime= this.targetDate
       const deltaTime = startTime- currentTime;
       const time = this.getTimeComponents(deltaTime);
       this.onTick(time);
     }, 1000);
+  }
+
+  stop() {
+      clearInterval(this.intervalId);
+      const time = this.getTimeComponents(0);
+      this.onTick(time);  
   }
 
   getTimeComponents(time) {
@@ -39,13 +45,13 @@ class CountdownTimer {
   pad(value) {
     return String(value).padStart(2, 0);
   }
-
+    
+   
 }
-
 
 const countDownTimer = new CountdownTimer({
   selector: '#timer-1',
-  targetDate: new Date('Jul 17, 2021'),
+  targetDate: new Date('Jun 08, 2021'),
   onTick: updateClockface,
 });
 
@@ -56,4 +62,8 @@ function updateClockface({ days ='00', hours = '00', mins ='00', secs='00' }) {
   refs.seconds.textContent = `${secs}`;
 }
 
-countDownTimer.startTimer();
+if (countDownTimer.targetDate < Date.now()) {
+  countDownTimer.stop();
+} else {
+  countDownTimer.startTimer();
+}
