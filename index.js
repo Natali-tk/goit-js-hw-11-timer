@@ -1,5 +1,5 @@
 
-
+"use strict";
 
 const refs = {
   clock: document.getElementById('#timer-1'),
