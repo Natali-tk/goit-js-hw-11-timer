@@ -1,37 +1,43 @@
 
 "use strict";
 
-const refs = {
-  clock: document.getElementById('#timer-1'),
-  days: document.querySelector('[data-value="days"]'),
-  hours: document.querySelector('[data-value="hours"]'),
-  minutes: document.querySelector('[data-value="mins"]'),
-  seconds: document.querySelector('[data-value="secs"]'),
-}
 
 class CountdownTimer {
-  constructor({ selector, targetDate, onTick}) {
+  constructor({ selector, targetDate}) {
     this.selector = selector;
     this.targetDate = targetDate;
     this.intervalId = null;
-    this.onTick = onTick;
+    this.refs = {
+      days: document.querySelector(
+        `${this.selector} span[data-value="days"]`
+      ),
+      hours: document.querySelector(
+        `${this.selector} span[data-value="hours"]`
+      ),
+      minutes: document.querySelector(
+        `${this.selector} span[data-value="mins"]`
+      ),
+      seconds: document.querySelector(
+        `${this.selector} span[data-value="secs"]`
+      ),
+    };
 
   }
 
   startTimer = () => {
-    this.intervalId = setInterval(() => {
+     this.intervalId = setInterval(() => {
       const currentTime = Date.now();
-      const startTime= this.targetDate
-      const deltaTime = startTime- currentTime;
+      const startTime = this.targetDate;
+      const deltaTime = startTime - currentTime;
       const time = this.getTimeComponents(deltaTime);
-      this.onTick(time);
+      this.updateClockface(time);
     }, 1000);
   }
 
-  stop() {
+  stopTimer() {
       clearInterval(this.intervalId);
       const time = this.getTimeComponents(0);
-      this.onTick(time);  
+      this.updateClockface(time); 
   }
 
   getTimeComponents(time) {
@@ -45,25 +51,24 @@ class CountdownTimer {
   pad(value) {
     return String(value).padStart(2, 0);
   }
-    
-   
+  
+  updateClockface({ days ='00', hours = '00', mins ='00', secs='00' }) {
+  this.refs.days.textContent = `${days}`;
+  this.refs.hours.textContent = `${hours}`;
+  this.refs.minutes.textContent = `${mins}`;
+  this.refs.seconds.textContent = `${secs}`;
+  } 
 }
 
 const countDownTimer = new CountdownTimer({
   selector: '#timer-1',
   targetDate: new Date('Jun 08, 2021'),
-  onTick: updateClockface,
 });
 
-function updateClockface({ days ='00', hours = '00', mins ='00', secs='00' }) {
-  refs.days.textContent = `${days}`;
-  refs.hours.textContent = `${hours}`;
-  refs.minutes.textContent = `${mins}`;
-  refs.seconds.textContent = `${secs}`;
-}
+
 
 if (countDownTimer.targetDate < Date.now()) {
-  countDownTimer.stop();
+  countDownTimer.stopTimer();
 } else {
   countDownTimer.startTimer();
 }
